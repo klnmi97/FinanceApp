@@ -1,10 +1,12 @@
-package com.klunko.financeapp.ui.main
+package com.klunko.financeapp.adapters
 
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.klunko.financeapp.R
+import com.klunko.financeapp.ui.main.ListFragment
+import com.klunko.financeapp.ui.main.PlaceholderFragment
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_text_1,
@@ -21,7 +23,15 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
     override fun getItem(position: Int): Fragment {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
-        return PlaceholderFragment.newInstance(position + 1)
+        return when (position) {
+            0 -> {
+                ListFragment()
+            }
+            else -> {
+                return ListFragment()
+            }
+        }
+        //return PlaceholderFragment.newInstance(position + 1)
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
