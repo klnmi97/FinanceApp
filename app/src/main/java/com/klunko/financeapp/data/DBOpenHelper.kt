@@ -31,8 +31,8 @@ private const val SQL_CREATE_TRANSACTION_ENTRIES =
 private const val SQL_DROP_GROUPS = "DROP TABLE IF EXISTS ${DBContract.CategoryEntry.TABLE_NAME}"
 private const val SQL_DROP_TRANSACTIONS = "DROP TABLE IF EXISTS ${DBContract.TransactionEntry.TABLE_NAME}"
 
-class DBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
-    SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
+class DBOpenHelper(context: Context):
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
         const val DATABASE_NAME = "finances.db"
@@ -89,6 +89,11 @@ class DBOpenHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
 
         val db = this.writableDatabase
         db?.insert(DBContract.TransactionEntry.TABLE_NAME, null, newTransaction)
+    }
+
+    fun getAllTransactions(): Cursor? {
+        val db = this.readableDatabase
+        return db?.rawQuery("SELECT * from ${DBContract.TransactionEntry.TABLE_NAME}", null)
     }
 
 }
