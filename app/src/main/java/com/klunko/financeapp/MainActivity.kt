@@ -12,6 +12,10 @@ import com.klunko.financeapp.data.DBOpenHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list.*
 
+/* List of default transaction categories */
+val DEFAULT_CAT_LIST = listOf("General", "Food", "Entertainment", "Sports", "Public Transport",
+    "Home", "Work", "Health", "Electronics", "Clothing", "Family", "Services", "Holidays")
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

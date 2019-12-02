@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
+import com.klunko.financeapp.DEFAULT_CAT_LIST
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,10 +58,8 @@ class DBOpenHelper(context: Context):
      * @param db The database
      * */
     private fun createDefaultGroups(db: SQLiteDatabase?) {
-        val categories = listOf("General", "Food", "Entertainment", "Sports", "Public Transport",
-            "Home", "Work", "Health", "Electronics", "Clothing", "Family", "Services", "Holidays")
 
-        for (cat in categories) {
+        for (cat in DEFAULT_CAT_LIST) {
             val group = ContentValues().apply {
                 put(DBContract.CategoryEntry.COLUMN_NAME, "General") }
             db?.insert(DBContract.CategoryEntry.TABLE_NAME, null, group)
@@ -74,7 +73,7 @@ class DBOpenHelper(context: Context):
     }
 
     fun insertTransaction(value: Float, isExpense: Boolean, date: Date, title: String, category: Int,
-                          desc: String) {
+                          desc: String): Long? {
         val expenseFlag = if(isExpense) 1 else 0
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
@@ -88,7 +87,8 @@ class DBOpenHelper(context: Context):
         }
 
         val db = this.writableDatabase
-        db?.insert(DBContract.TransactionEntry.TABLE_NAME, null, newTransaction)
+
+        return db?.insert(DBContract.TransactionEntry.TABLE_NAME, null, newTransaction)
     }
 
     fun getAllTransactions(): Cursor? {
