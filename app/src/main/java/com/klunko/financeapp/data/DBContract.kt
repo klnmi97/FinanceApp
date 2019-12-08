@@ -9,7 +9,7 @@ object DBContract {
         const val COLUMN_VALUE = "value"
         const val COLUMN_TITLE = "title"
         const val COLUMN_IS_EXPENSE = "expense"
-        const val COLUMN_CATEGORY = "group"
+        const val COLUMN_CATEGORY = "category"
         const val COLUMN_DATE = "date"
         const val COLUMN_DESCRIPTION = "description"
     }

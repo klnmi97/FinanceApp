@@ -14,19 +14,19 @@ private const val SQL_CREATE_GROUP_ENTRIES =
     "CREATE TABLE ${DBContract.CategoryEntry.TABLE_NAME} (" +
             "${BaseColumns._ID} INTEGER PRIMARY KEY," +
             "${DBContract.CategoryEntry.COLUMN_NAME} TEXT NOT NULL," +
-            "${DBContract.CategoryEntry.COLUMN_PARENT_GROUP_ID} INTEGER"
+            "${DBContract.CategoryEntry.COLUMN_PARENT_GROUP_ID} INTEGER);"
 
 private const val SQL_CREATE_TRANSACTION_ENTRIES =
     "CREATE TABLE ${DBContract.TransactionEntry.TABLE_NAME} (" +
-            "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-            "${DBContract.TransactionEntry.COLUMN_VALUE} REAL DEFAULT 0," +
-            "${DBContract.TransactionEntry.COLUMN_TITLE} TEXT" +
-            "${DBContract.TransactionEntry.COLUMN_IS_EXPENSE} INTEGER DEFAULT 1," +
-            "${DBContract.TransactionEntry.COLUMN_DATE} TEXT," +
-            "${DBContract.TransactionEntry.COLUMN_DESCRIPTION} TEXT," +
-            "${DBContract.TransactionEntry.COLUMN_CATEGORY} INTEGER NOT NULL," +
-            "FOREIGN KEY ${DBContract.TransactionEntry.COLUMN_CATEGORY} REFERENCES " +
-            "${DBContract.CategoryEntry.TABLE_NAME}(${BaseColumns._ID})" +
+            "${BaseColumns._ID} INTEGER PRIMARY KEY, " +
+            "${DBContract.TransactionEntry.COLUMN_VALUE} REAL DEFAULT 0, " +
+            "${DBContract.TransactionEntry.COLUMN_TITLE} TEXT, " +
+            "${DBContract.TransactionEntry.COLUMN_IS_EXPENSE} INTEGER DEFAULT 1, " +
+            "${DBContract.TransactionEntry.COLUMN_DATE} TEXT, " +
+            "${DBContract.TransactionEntry.COLUMN_DESCRIPTION} TEXT, " +
+            "${DBContract.TransactionEntry.COLUMN_CATEGORY} INTEGER NOT NULL, " +
+            "FOREIGN KEY (${DBContract.TransactionEntry.COLUMN_CATEGORY}) REFERENCES " +
+            "${DBContract.CategoryEntry.TABLE_NAME} (${BaseColumns._ID}) " +
             ");"
 
 private const val SQL_DROP_GROUPS = "DROP TABLE IF EXISTS ${DBContract.CategoryEntry.TABLE_NAME}"
@@ -41,6 +41,7 @@ class DBOpenHelper(context: Context):
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
+        db?.execSQL("PRAGMA foreign_keys=ON")
         db?.execSQL(SQL_CREATE_GROUP_ENTRIES)
         db?.execSQL(SQL_CREATE_TRANSACTION_ENTRIES)
         createDefaultGroups(db)

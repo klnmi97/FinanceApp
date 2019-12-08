@@ -11,7 +11,7 @@ import com.klunko.financeapp.R
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.transaction_list_item.view.*
 
-class TransactionsAdapter(private val data: Cursor, context: Context): RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
+class TransactionsAdapter(private var data: Cursor, context: Context): RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.transaction_list_item, parent, false)
@@ -25,13 +25,16 @@ class TransactionsAdapter(private val data: Cursor, context: Context): RecyclerV
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         data.move(position)
 
-        //TODO: update column names
-        holder?.mTitle?.text = data.getString(2)
+        //TODO: update column names, do properly
+        holder.mTitle.text = data.getString(2)
         val groupId = data.getString(5)
-        holder?.mGroup?.text = groupId
-        holder?.mValue?.text = "$" + data.getFloat(1).toString()
+        holder.mGroup.text = groupId
+        holder.mValue.text = "$" + data.getFloat(1).toString()
     }
 
+    fun swapCursor(cursor: Cursor) {
+        data = cursor
+    }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val mTitle: TextView = view.findViewById(R.id.tv_transaction_title)
