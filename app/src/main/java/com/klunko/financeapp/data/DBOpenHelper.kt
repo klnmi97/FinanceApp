@@ -62,7 +62,7 @@ class DBOpenHelper(context: Context):
 
         for (cat in DEFAULT_CAT_LIST) {
             val group = ContentValues().apply {
-                put(DBContract.CategoryEntry.COLUMN_NAME, "General") }
+                put(DBContract.CategoryEntry.COLUMN_NAME, cat) }
             db?.insert(DBContract.CategoryEntry.TABLE_NAME, null, group)
         }
     }

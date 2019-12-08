@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -48,24 +49,23 @@ class TransactionActivity : AppCompatActivity() {
         //TODO: change list for data from the db
         group_spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
             DEFAULT_CAT_LIST)
-        group_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int,
-                                        id: Long) {
-                selectedCategoryId = position
-            }
-
+        group_spinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 selectedCategoryId = 0
             }
 
-        }
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                Log.d(this.javaClass.name, "Category spinner: $position selected")
+                selectedCategoryId = position
+            }
 
+        }
         button_ok.setOnClickListener {
             //TODO: add try/catch
             val value = value_input.text.toString().toFloat()
             val db = DBOpenHelper(this)
-            db.insertTransaction(value, expense_switch.isChecked, date, title.toString(),
-                selectedCategoryId, description.toString())
+            db.insertTransaction(value, expense_switch.isChecked, date, et_title.text.toString(),
+                selectedCategoryId, description.text.toString())
             val resultIntent = Intent()
             //TODO: add edit request code
             setResult(MainActivity.REQ_ADD_OK, resultIntent)

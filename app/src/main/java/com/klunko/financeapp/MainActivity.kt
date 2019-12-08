@@ -48,9 +48,9 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == REQ_ADD_OK) {
+        if(requestCode == REQUEST_ADD) {
 
-            if(resultCode == Activity.RESULT_OK) {
+            if(resultCode == REQ_ADD_OK) {
                 val fragment = getActivePage()
                 fragment.notifyDataUpdate()
             }

@@ -57,6 +57,7 @@ class ListFragment : PageFragment() {
             val recyclerViewAdapter = transaction_list.adapter as TransactionsAdapter
             recyclerViewAdapter.swapCursor(cursor)
         }
+        transaction_list.adapter?.notifyDataSetChanged()
     }
 
 }
