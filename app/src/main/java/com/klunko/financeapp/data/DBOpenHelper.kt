@@ -97,4 +97,11 @@ class DBOpenHelper(context: Context):
         return db?.rawQuery("SELECT * from ${DBContract.TransactionEntry.TABLE_NAME}", null)
     }
 
+    fun getMonthTransactions(month: String, year: String): Cursor? {
+        val db = this.readableDatabase
+        return db?.rawQuery("SELECT * FROM ${DBContract.TransactionEntry.TABLE_NAME} WHERE " +
+                "strftime('%Y', ${DBContract.TransactionEntry.COLUMN_DATE}) = '$year' AND " +
+                "strftime('%m', ${DBContract.TransactionEntry.COLUMN_DATE}) = '$month'", null)
+    }
+
 }

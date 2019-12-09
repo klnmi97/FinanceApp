@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.DatePicker
 import com.klunko.financeapp.DEFAULT_CAT_LIST
 import com.klunko.financeapp.MainActivity
 import com.klunko.financeapp.R
@@ -20,7 +19,7 @@ import java.util.*
 class TransactionActivity : AppCompatActivity() {
 
     //TODO: update with newer import
-    private lateinit var date: Date
+    private lateinit var selectedDate: Date
     private var calendar = Calendar.getInstance()
     private var selectedCategoryId = 0
 
@@ -28,9 +27,11 @@ class TransactionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transaction)
 
-        date = Calendar.getInstance().time
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        date_spinner.text = convertDate(date)
+        selectedDate = Calendar.getInstance().time
+
+        date_spinner.text = convertDate(selectedDate)
 
         val dateListener = DatePickerDialog.OnDateSetListener { view, year, month, day ->
             calendar.set(Calendar.YEAR, year)
@@ -64,13 +65,18 @@ class TransactionActivity : AppCompatActivity() {
             //TODO: add try/catch
             val value = value_input.text.toString().toFloat()
             val db = DBOpenHelper(this)
-            db.insertTransaction(value, expense_switch.isChecked, date, et_title.text.toString(),
+            db.insertTransaction(value, expense_switch.isChecked, selectedDate, et_title.text.toString(),
                 selectedCategoryId, description.text.toString())
             val resultIntent = Intent()
             //TODO: add edit request code
             setResult(MainActivity.REQ_ADD_OK, resultIntent)
             finish()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun convertDate(date: Date): String {
@@ -81,5 +87,6 @@ class TransactionActivity : AppCompatActivity() {
     private fun updateDate() {
         val date = convertDate(calendar.time)
         date_spinner!!.text = (date)
+        selectedDate = calendar.time
     }
 }
