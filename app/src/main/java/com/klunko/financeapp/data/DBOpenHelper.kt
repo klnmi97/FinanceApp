@@ -32,6 +32,8 @@ private const val SQL_CREATE_TRANSACTION_ENTRIES =
 private const val SQL_DROP_GROUPS = "DROP TABLE IF EXISTS ${DBContract.CategoryEntry.TABLE_NAME}"
 private const val SQL_DROP_TRANSACTIONS = "DROP TABLE IF EXISTS ${DBContract.TransactionEntry.TABLE_NAME}"
 
+private const val ORDER_BY_DATE = " ORDER BY datetime(${DBContract.TransactionEntry.COLUMN_DATE}) DESC"
+
 class DBOpenHelper(context: Context):
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -92,16 +94,39 @@ class DBOpenHelper(context: Context):
         return db?.insert(DBContract.TransactionEntry.TABLE_NAME, null, newTransaction)
     }
 
-    fun getAllTransactions(): Cursor? {
+    fun getAllTransactions(orderByDate: Boolean): Cursor? {
+        var query = "SELECT * from ${DBContract.TransactionEntry.TABLE_NAME}"
+        if(orderByDate) {
+            query += ORDER_BY_DATE
+        }
+
         val db = this.readableDatabase
-        return db?.rawQuery("SELECT * from ${DBContract.TransactionEntry.TABLE_NAME}", null)
+        return db?.rawQuery(query, null)
     }
 
-    fun getMonthTransactions(month: String, year: String): Cursor? {
-        val db = this.readableDatabase
-        return db?.rawQuery("SELECT * FROM ${DBContract.TransactionEntry.TABLE_NAME} WHERE " +
+    fun getMonthTransactions(month: String, year: String, orderByDate: Boolean): Cursor? {
+        var query = "SELECT * FROM ${DBContract.TransactionEntry.TABLE_NAME} WHERE " +
                 "strftime('%Y', ${DBContract.TransactionEntry.COLUMN_DATE}) = '$year' AND " +
-                "strftime('%m', ${DBContract.TransactionEntry.COLUMN_DATE}) = '$month'", null)
+                "strftime('%m', ${DBContract.TransactionEntry.COLUMN_DATE}) = '$month' "
+        if(orderByDate) {
+            query += ORDER_BY_DATE
+        }
+
+        val db = this.readableDatabase
+        return db?.rawQuery(query, null)
+    }
+
+    fun getMinDate(): Date{
+        var query = "SELECT min(${DBContract.TransactionEntry.COLUMN_DATE}) FROM ${DBContract.TransactionEntry.TABLE_NAME}"
+
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(query, null)
+        if(cursor.moveToFirst()) {
+            val rawDate = cursor.getString(0)
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            return dateFormat.parse(rawDate)
+        }
+        return Calendar.getInstance().time
     }
 
 }

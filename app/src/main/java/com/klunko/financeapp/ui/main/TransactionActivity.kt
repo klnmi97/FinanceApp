@@ -48,7 +48,7 @@ class TransactionActivity : AppCompatActivity() {
                 calendar.get(Calendar.DAY_OF_MONTH)).show()
         }
         //TODO: change list for data from the db
-        group_spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
+        group_spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
             DEFAULT_CAT_LIST)
         group_spinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {

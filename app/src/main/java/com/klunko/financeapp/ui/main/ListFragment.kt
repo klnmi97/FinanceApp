@@ -31,15 +31,8 @@ class ListFragment : PageFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*val transactions = ArrayList<String>()
-        transactions.add("Transaction 1")
-        transactions.add("Transaction 2")
-        transactions.add("Transaction 3")
-        transactions.add("Transaction 4")
-        transactions.add("Transaction 5")*/
-
         val db = DBOpenHelper(activity!!.applicationContext)
-        val cursor = db.getAllTransactions()
+        val cursor = db.getAllTransactions(true)
 
         if(cursor != null) {
             transaction_list.apply {
@@ -51,7 +44,7 @@ class ListFragment : PageFragment() {
 
     override fun notifyDataUpdate() {
         val db = DBOpenHelper(activity!!.applicationContext)
-        val cursor = db.getAllTransactions()
+        val cursor = db.getAllTransactions(true)
 
         if(cursor != null) {
             val recyclerViewAdapter = transaction_list.adapter as TransactionsAdapter
