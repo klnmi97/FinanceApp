@@ -12,6 +12,7 @@ import com.klunko.financeapp.DEFAULT_CAT_LIST
 import com.klunko.financeapp.MainActivity
 import com.klunko.financeapp.R
 import com.klunko.financeapp.data.DBOpenHelper
+import com.klunko.financeapp.data.Transaction
 import kotlinx.android.synthetic.main.activity_transaction.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,8 +21,11 @@ class TransactionActivity : AppCompatActivity() {
 
     //TODO: update with newer import
     private lateinit var selectedDate: Date
+    private var requestCode = 0
     private var calendar = Calendar.getInstance()
     private var selectedCategoryId = 0
+    private var transactionId = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +34,9 @@ class TransactionActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         selectedDate = Calendar.getInstance().time
+
+        val requestIntent = intent
+        requestCode = requestIntent.getIntExtra(MainActivity.EXTRA_CODE, MainActivity.REQUEST_ADD)
 
         date_spinner.text = convertDate(selectedDate)
 
@@ -48,8 +55,21 @@ class TransactionActivity : AppCompatActivity() {
                 calendar.get(Calendar.DAY_OF_MONTH)).show()
         }
         //TODO: change list for data from the db
-        group_spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+
+        var catSpinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
             DEFAULT_CAT_LIST)
+        catSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        with(group_spinner) {
+            adapter = catSpinnerAdapter
+        }
+
+        if(requestCode == MainActivity.REQUEST_EDIT) {
+            transactionId = intent.getIntExtra(MainActivity.EXTRA_TRANSACTION, MainActivity.REQUEST_EDIT)
+            val db = DBOpenHelper(this)
+            val transaction = db.getTransaction(transactionId)
+            extractData(transaction)
+        }
+
         group_spinner?.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 selectedCategoryId = 0
@@ -62,21 +82,24 @@ class TransactionActivity : AppCompatActivity() {
 
         }
         button_ok.setOnClickListener {
-            //TODO: add try/catch
-            val value = value_input.text.toString().toFloat()
-            val db = DBOpenHelper(this)
-            db.insertTransaction(value, expense_switch.isChecked, selectedDate, et_title.text.toString(),
-                selectedCategoryId, description.text.toString())
-            val resultIntent = Intent()
-            //TODO: add edit request code
-            setResult(MainActivity.REQ_ADD_OK, resultIntent)
-            finish()
+            saveAndFinish()
         }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    private fun extractData(data: Transaction) {
+        value_input.setText(data.value.toString())
+        et_title.setText(data.title)
+        selectedCategoryId = data.category
+        group_spinner.setSelection(data.category, false)
+        expense_switch.isChecked = data.isExpense
+        calendar.time = data.date
+        updateDate()
+        description.setText(data.desc)
     }
 
     private fun convertDate(date: Date): String {
@@ -88,5 +111,24 @@ class TransactionActivity : AppCompatActivity() {
         val date = convertDate(calendar.time)
         date_spinner!!.text = (date)
         selectedDate = calendar.time
+    }
+
+    private fun saveAndFinish() {
+        val value = value_input.text.toString().toFloat()
+        val db = DBOpenHelper(this)
+        var resultCode = -1
+        if(requestCode == MainActivity.REQUEST_ADD) {
+            db.insertTransaction(value, expense_switch.isChecked, selectedDate, et_title.text.toString(),
+                selectedCategoryId, description.text.toString())
+            resultCode = MainActivity.REQ_ADD_OK
+        } else if (requestCode == MainActivity.REQUEST_EDIT) {
+            db.updateTransaction(Transaction(transactionId, value, et_title.text.toString(),
+                expense_switch.isChecked, selectedDate, description.text.toString(), selectedCategoryId))
+            resultCode = MainActivity.REQ_EDIT_OK
+        }
+
+        val resultIntent = Intent()
+        setResult(resultCode, resultIntent)
+        finish()
     }
 }

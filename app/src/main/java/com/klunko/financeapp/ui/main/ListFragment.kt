@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
+import com.klunko.financeapp.MainActivity
 
 import com.klunko.financeapp.R
 import com.klunko.financeapp.adapters.TransactionsAdapter
@@ -37,7 +37,7 @@ class ListFragment : PageFragment() {
         if(cursor != null) {
             transaction_list.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = TransactionsAdapter(cursor, context)
+                adapter = TransactionsAdapter(cursor, activity as TransactionsAdapter.OnItemClickListener)
             }
         }
     }

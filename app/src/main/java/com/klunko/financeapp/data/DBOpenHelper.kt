@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
+import android.util.Log
 import com.klunko.financeapp.DEFAULT_CAT_LIST
 import java.text.SimpleDateFormat
 import java.util.*
@@ -94,6 +95,45 @@ class DBOpenHelper(context: Context):
         return db?.insert(DBContract.TransactionEntry.TABLE_NAME, null, newTransaction)
     }
 
+    fun getTransaction(id: Int): Transaction {
+        val query = "SELECT * FROM ${DBContract.TransactionEntry.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+        val db = this.readableDatabase
+        val cursor = db?.rawQuery(query, arrayOf(id.toString()))
+
+        cursor!!.moveToFirst()
+        val id = cursor.getInt(0)
+        val value = cursor.getFloat(1)
+        val title = cursor.getString(2)
+        val isExpense = cursor.getInt(3) == 1
+        val date = dateFormat.parse(cursor.getString(4))
+        val desc = cursor.getString(5)
+        val cat = cursor.getInt(6)
+
+        return Transaction(id, value, title, isExpense, date, desc, cat)
+    }
+
+    fun updateTransaction(transaction: Transaction) {
+
+        val whereClause = "${BaseColumns._ID} = ?"
+        val expenseFlag = if(transaction.isExpense) 1 else 0
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+        val newTransaction = ContentValues().apply {
+            put(DBContract.TransactionEntry.COLUMN_VALUE, transaction.value)
+            put(DBContract.TransactionEntry.COLUMN_IS_EXPENSE, expenseFlag)
+            put(DBContract.TransactionEntry.COLUMN_DATE, dateFormat.format(transaction.date))
+            put(DBContract.TransactionEntry.COLUMN_TITLE, transaction.title)
+            put(DBContract.TransactionEntry.COLUMN_CATEGORY, transaction.category)
+            put(DBContract.TransactionEntry.COLUMN_DESCRIPTION, transaction.desc)
+        }
+
+        val db = this.writableDatabase
+        val rowsUpdated = db.update("${DBContract.TransactionEntry.TABLE_NAME}", newTransaction, whereClause, arrayOf(transaction.id.toString()))
+        Log.d(this.javaClass.name, "Updated $rowsUpdated rows")
+    }
+
     fun getAllTransactions(orderByDate: Boolean): Cursor? {
         var query = "SELECT * from ${DBContract.TransactionEntry.TABLE_NAME}"
         if(orderByDate) {
@@ -117,7 +157,8 @@ class DBOpenHelper(context: Context):
     }
 
     fun getMinDate(): Date{
-        var query = "SELECT min(${DBContract.TransactionEntry.COLUMN_DATE}) FROM ${DBContract.TransactionEntry.TABLE_NAME}"
+        var query = "SELECT min(${DBContract.TransactionEntry.COLUMN_DATE}) FROM " +
+                "${DBContract.TransactionEntry.TABLE_NAME}"
 
         val db = this.readableDatabase
         val cursor = db.rawQuery(query, null)
@@ -127,6 +168,25 @@ class DBOpenHelper(context: Context):
             return dateFormat.parse(rawDate)
         }
         return Calendar.getInstance().time
+    }
+
+    fun getBalance(): Float {
+        val selection = " WHERE ${DBContract.TransactionEntry.COLUMN_IS_EXPENSE} = "
+        val expenseValue = "1"
+        val incomeValue = "0"
+        val expenses = getSum(selection + expenseValue)
+        val incomes = getSum(selection + incomeValue)
+        return incomes - expenses
+    }
+
+    private fun getSum(selection: String): Float {
+        var query = "SELECT sum(${DBContract.TransactionEntry.COLUMN_VALUE}) FROM " +
+                "${DBContract.TransactionEntry.TABLE_NAME}"
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(query + selection, null)
+        return if(cursor.moveToFirst()) {
+            cursor.getFloat(0)
+        } else 0 as Float
     }
 
 }
