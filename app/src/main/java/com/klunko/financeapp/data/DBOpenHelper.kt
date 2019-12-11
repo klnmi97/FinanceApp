@@ -10,6 +10,7 @@ import android.util.Log
 import com.klunko.financeapp.DEFAULT_CAT_LIST
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 private const val SQL_CREATE_GROUP_ENTRIES =
     "CREATE TABLE ${DBContract.CategoryEntry.TABLE_NAME} (" +
@@ -178,19 +179,37 @@ class DBOpenHelper(context: Context):
     }
 
     fun getBalance(): Float {
-        val selection = " WHERE ${DBContract.TransactionEntry.COLUMN_IS_EXPENSE} = "
-        val expenseValue = "1"
-        val incomeValue = "0"
-        val expenses = getSum(selection + expenseValue)
-        val incomes = getSum(selection + incomeValue)
+        val expenses = getOperations(true)
+        val incomes = getOperations(false)
         return incomes - expenses
     }
 
-    private fun getSum(selection: String): Float {
+    fun getOperations(expense: Boolean): Float {
+        val selection = " WHERE ${DBContract.TransactionEntry.COLUMN_IS_EXPENSE} = ?"
+        val selectionArg = if(expense) "1" else "0"
+        return getSum(selection, arrayOf(selectionArg))
+    }
+
+    fun getValueByCategory(expense: Boolean): HashMap<String, Float> {
+        val selectionArg = if(expense) "1" else "0"
+        var map = HashMap<String, Float>()
+        for(category in 1 until DEFAULT_CAT_LIST.size) {
+            val selection = " WHERE ${DBContract.TransactionEntry.COLUMN_CATEGORY} = ? AND " +
+                    "${DBContract.TransactionEntry.COLUMN_IS_EXPENSE} = ?"
+            val result = getSum(selection, arrayOf(category.toString(), selectionArg))
+            if(result != 0f){
+                map[DEFAULT_CAT_LIST[category]] = result
+            }
+
+        }
+        return map
+    }
+
+    private fun getSum(selection: String, selectionArgs: Array<String>): Float {
         var query = "SELECT sum(${DBContract.TransactionEntry.COLUMN_VALUE}) FROM " +
                 "${DBContract.TransactionEntry.TABLE_NAME}"
         val db = this.readableDatabase
-        val cursor = db.rawQuery(query + selection, null)
+        val cursor = db.rawQuery(query + selection, selectionArgs)
         return if(cursor.moveToFirst()) {
             cursor.getFloat(0)
         } else 0 as Float
