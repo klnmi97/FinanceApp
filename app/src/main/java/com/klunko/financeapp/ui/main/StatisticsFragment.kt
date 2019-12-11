@@ -55,14 +55,16 @@ class StatisticsFragment : PageFragment() {
         expenseMap = db.getValueByCategory(true)
         incomeMap = db.getValueByCategory(false)
         allIncomes = db.getOperations(false)
-        allExpenses = db.getOperations(true)
+        allExpenses = kotlin.math.abs(db.getOperations(true))
 
     }
 
     fun updateUI() {
         tv_balance.text = balance.toString()
-        setupChart(expenseMap, expenses_piechart, "Expenses")
-        setupChart(incomeMap, incomes_piechart, "Incomes")
+        tv_expenses.text = allExpenses.toString()
+        tv_incomes.text = allIncomes.toString()
+        setupChart(expenseMap, expenses_piechart, resources.getString(R.string.expenses_text))
+        setupChart(incomeMap, incomes_piechart, resources.getString(R.string.incomes_text))
     }
 
     override fun notifyDataUpdate() {
@@ -85,7 +87,7 @@ class StatisticsFragment : PageFragment() {
             desc.textSize = 20f
             chart.description = desc
 
-            val dataSet = PieDataSet(list, "Categories")
+            val dataSet = PieDataSet(list, "")
 
             val data = PieData(dataSet)
             chart.data = data

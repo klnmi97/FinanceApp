@@ -6,10 +6,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
 import com.klunko.financeapp.R
 import com.klunko.financeapp.ui.main.ListFragment
-import com.klunko.financeapp.ui.main.PlaceholderFragment
 import com.klunko.financeapp.ui.main.StatisticsFragment
 
 private val TAB_TITLES = arrayOf(

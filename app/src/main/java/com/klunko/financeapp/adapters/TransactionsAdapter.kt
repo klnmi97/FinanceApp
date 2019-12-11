@@ -26,10 +26,8 @@ class TransactionsAdapter(private var data: Cursor, val itemClickListener: OnIte
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(data.moveToPosition(position)) {
-            //TODO: update column names, do properly
             val title = data.getString(2)
             val groupId = data.getString(6).toInt()
-            //TODO: Change for categories table request
             val categoryName = DEFAULT_CAT_LIST[groupId]
 
             val transactionValue = data.getFloat(1)

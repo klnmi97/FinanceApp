@@ -42,27 +42,68 @@
                 android:id="@+id/expenses_piechart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_balance_header" />
+                android:layout_marginTop="16dp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_expenses"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="+50358,00"
+            android:textSize="35sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chart1_box" />
+
+        <TextView
+            android:id="@+id/tv_expenses_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/expenses_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_expenses" />
 
         <LinearLayout
             android:id="@+id/chart2_box"
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/chart1_box">
+            app:layout_constraintTop_toBottomOf="@+id/tv_expenses_header">
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/incomes_piechart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_balance_header" />
+                android:layout_marginTop="16dp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_incomes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="+50358,00"
+            android:textSize="35sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chart2_box" />
+
+        <TextView
+            android:id="@+id/tv_incomes_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/incomes_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_incomes" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintTop_toBottomOf="@+id/chart2_box"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
