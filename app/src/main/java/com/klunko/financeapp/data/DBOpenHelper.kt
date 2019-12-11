@@ -131,6 +131,13 @@ class DBOpenHelper(context: Context):
 
         val db = this.writableDatabase
         val rowsUpdated = db.update("${DBContract.TransactionEntry.TABLE_NAME}", newTransaction, whereClause, arrayOf(transaction.id.toString()))
+        Log.d(this.javaClass.name, "Updated $rowsUpdated row")
+    }
+
+    fun deleteTransaction(id: Int) {
+        val whereClause = "${BaseColumns._ID} = ?"
+        val db = this.writableDatabase
+        val rowsUpdated = db.delete("${DBContract.TransactionEntry.TABLE_NAME}", whereClause, arrayOf(id.toString()))
         Log.d(this.javaClass.name, "Updated $rowsUpdated rows")
     }
 

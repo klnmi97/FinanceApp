@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -86,6 +88,28 @@ class TransactionActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        
+        if(requestCode == MainActivity.REQUEST_EDIT) {
+            menuInflater.inflate(R.menu.transaction_menu, menu)
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item)
+
+        return when(item.itemId) {
+            R.id.menu_delete_item -> {
+                deleteAndFinish()
+                true
+            } else -> {
+                false
+            }
+        }
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
@@ -129,6 +153,16 @@ class TransactionActivity : AppCompatActivity() {
 
         val resultIntent = Intent()
         setResult(resultCode, resultIntent)
+        finish()
+    }
+
+    private fun deleteAndFinish() {
+        if(requestCode == MainActivity.REQUEST_EDIT) {
+            val db = DBOpenHelper(this)
+            db.deleteTransaction(transactionId)
+        }
+        val resultIntent = Intent()
+        setResult(MainActivity.REQ_EDIT_OK, resultIntent)
         finish()
     }
 }
