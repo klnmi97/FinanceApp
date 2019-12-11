@@ -3,8 +3,11 @@ package com.klunko.financeapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.SparseArray
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.util.forEach
+import androidx.fragment.app.Fragment
 import com.klunko.financeapp.adapters.SectionsPagerAdapter
 import com.klunko.financeapp.adapters.TransactionsAdapter
 import com.klunko.financeapp.interfaces.PageFragment
@@ -54,13 +57,11 @@ class MainActivity : AppCompatActivity(), TransactionsAdapter.OnItemClickListene
         if(requestCode == REQUEST_ADD) {
 
             if(resultCode == REQ_ADD_OK) {
-                val fragment = getActivePage()
-                fragment.notifyDataUpdate()
+                notifyFragmentsToUpdate()
             }
         } else if (requestCode == REQUEST_EDIT) {
             if(resultCode == REQ_EDIT_OK) {
-                val fragment = getActivePage()
-                fragment.notifyDataUpdate()
+                notifyFragmentsToUpdate()
             }
         }
     }
@@ -81,5 +82,16 @@ class MainActivity : AppCompatActivity(), TransactionsAdapter.OnItemClickListene
     private fun getActivePage(): PageFragment {
         val position = view_pager.currentItem
         return sectionsPagerAdapter.getRegisteredFragment(position) as PageFragment
+    }
+
+    private fun getActiveFragments(): SparseArray<Fragment> {
+        return sectionsPagerAdapter.getRegisteredFragments()
+    }
+
+    fun notifyFragmentsToUpdate() {
+        val fragments = getActiveFragments()
+        for(i in 0 until fragments.size()) {
+            (fragments.get(i) as PageFragment).notifyDataUpdate()
+        }
     }
 }

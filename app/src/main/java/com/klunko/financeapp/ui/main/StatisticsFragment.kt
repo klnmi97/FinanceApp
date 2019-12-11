@@ -9,25 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.klunko.financeapp.R
+import com.klunko.financeapp.data.DBOpenHelper
+import com.klunko.financeapp.interfaces.PageFragment
+import kotlinx.android.synthetic.main.fragment_statistics.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [StatisticsFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [StatisticsFragment.newInstance] factory method to
- * create an instance of this fragment.
  */
-class StatisticsFragment : Fragment() {
+class StatisticsFragment : PageFragment() {
+
+    private var balance: Float = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -36,5 +31,28 @@ class StatisticsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_statistics, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //initialize fields with data from the db
+        fetchData()
+        //set new values to UI
+        updateUI()
+    }
+
+    fun fetchData() {
+        val db = DBOpenHelper(activity!!.applicationContext)
+        balance = db.getBalance()
+
+    }
+
+    fun updateUI() {
+        tv_balance.text = balance.toString()
+    }
+
+    override fun notifyDataUpdate() {
+        fetchData()
+        updateUI()
     }
 }

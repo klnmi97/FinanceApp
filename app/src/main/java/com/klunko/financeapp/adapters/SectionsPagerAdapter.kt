@@ -58,6 +58,10 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
         return registeredFragments.get(position)
     }
 
+    fun getRegisteredFragments(): SparseArray<Fragment> {
+        return registeredFragments
+    }
+
     override fun getPageTitle(position: Int): CharSequence? {
         return context.resources.getString(TAB_TITLES[position])
     }

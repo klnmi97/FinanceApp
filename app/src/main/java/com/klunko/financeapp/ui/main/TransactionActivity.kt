@@ -90,7 +90,7 @@ class TransactionActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
-        
+
         if(requestCode == MainActivity.REQUEST_EDIT) {
             menuInflater.inflate(R.menu.transaction_menu, menu)
         }
